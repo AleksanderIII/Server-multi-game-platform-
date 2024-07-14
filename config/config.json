@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "6818792Explorer",
+    "database": "multi_game_platform",
+    "host": "localhost",
+    "port": 5433,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "6818792Explorer",
+    "database": "multi_game_platform_test",
+    "host": "localhost",
+    "port": 5433,
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "your_production_username",
+    "password": "your_production_password",
+    "database": "your_production_database",
+    "host": "your_production_host",
+    "port": 5432,
+    "dialect": "postgres"
+  }
+}
