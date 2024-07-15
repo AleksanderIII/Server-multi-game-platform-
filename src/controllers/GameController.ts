@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import Game from '../models/Game';
-import logger from '../config/logger';
-import { Optional } from 'sequelize';
+import { Request, Response } from "express";
+import Game from "../models/Game";
+import logger from "../config/logger";
+import { Optional } from "sequelize";
 
 interface GameAttributes {
   id: number;
@@ -9,17 +9,18 @@ interface GameAttributes {
   genre: string;
   releaseDate: Date | null;
   isReleased: boolean;
+  imageUrl: string;
 }
 
-interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
+interface GameCreationAttributes extends Optional<GameAttributes, "id"> {}
 
 class GameController {
   public async createGame(req: Request, res: Response): Promise<Response> {
     try {
-      const { name, genre, releaseDate, isReleased } = req.body;
+      const { name, genre, releaseDate, isReleased, imageUrl } = req.body;
 
       if (!name || !genre) {
-        return res.status(400).json({ error: 'Name and genre are required' });
+        return res.status(400).json({ error: "Name and genre are required" });
       }
 
       const gameData: GameCreationAttributes = {
@@ -27,6 +28,7 @@ class GameController {
         genre,
         releaseDate,
         isReleased,
+        imageUrl
       };
 
       const game = await Game.create(gameData);
@@ -34,17 +36,17 @@ class GameController {
       return res.status(201).json({ game });
     } catch (error) {
       logger.error(`Failed to create game: ${error}`);
-      return res.status(500).json({ error: 'Failed to create game' });
+      return res.status(500).json({ error: "Failed to create game" });
     }
   }
 
   public async getAllGames(req: Request, res: Response): Promise<Response> {
     try {
       const games = await Game.findAll();
-      return res.json({ games });
+      return res.json(games);
     } catch (error) {
       logger.error(`Failed to fetch games: ${error}`);
-      return res.status(500).json({ error: 'Failed to fetch games' });
+      return res.status(500).json({ error: "Failed to fetch games" });
     }
   }
 
@@ -54,13 +56,13 @@ class GameController {
       const game = await Game.findByPk(id);
 
       if (!game) {
-        return res.status(404).json({ error: 'Game not found' });
+        return res.status(404).json({ error: "Game not found" });
       }
 
       return res.json({ game });
     } catch (error) {
       logger.error(`Failed to fetch game by ID: ${error}`);
-      return res.status(500).json({ error: 'Failed to fetch game by ID' });
+      return res.status(500).json({ error: "Failed to fetch game by ID" });
     }
   }
 
@@ -72,7 +74,7 @@ class GameController {
       const game = await Game.findByPk(id);
 
       if (!game) {
-        return res.status(404).json({ error: 'Game not found' });
+        return res.status(404).json({ error: "Game not found" });
       }
 
       await game.update({ name, genre, releaseDate, isReleased });
@@ -80,7 +82,7 @@ class GameController {
       return res.json({ game });
     } catch (error) {
       logger.error(`Failed to update game: ${error}`);
-      return res.status(500).json({ error: 'Failed to update game' });
+      return res.status(500).json({ error: "Failed to update game" });
     }
   }
 
@@ -90,7 +92,7 @@ class GameController {
       const game = await Game.findByPk(id);
 
       if (!game) {
-        return res.status(404).json({ error: 'Game not found' });
+        return res.status(404).json({ error: "Game not found" });
       }
 
       await game.destroy();
@@ -98,7 +100,7 @@ class GameController {
       return res.status(204).send();
     } catch (error) {
       logger.error(`Failed to delete game: ${error}`);
-      return res.status(500).json({ error: 'Failed to delete game' });
+      return res.status(500).json({ error: "Failed to delete game" });
     }
   }
 
@@ -107,15 +109,17 @@ class GameController {
       const { gameId, playerId } = req.body;
 
       if (!gameId || !playerId) {
-        return res.status(400).json({ error: 'Both gameId and playerId are required' });
+        return res
+          .status(400)
+          .json({ error: "Both gameId and playerId are required" });
       }
 
       // Logic to add player to game goes here
 
-      return res.status(501).json({ error: 'Not implemented' });
+      return res.status(501).json({ error: "Not implemented" });
     } catch (error) {
       logger.error(`Failed to add player to game: ${error}`);
-      return res.status(500).json({ error: 'Failed to add player to game' });
+      return res.status(500).json({ error: "Failed to add player to game" });
     }
   }
 
@@ -124,15 +128,15 @@ class GameController {
       const { gameId } = req.body;
 
       if (!gameId) {
-        return res.status(400).json({ error: 'gameId is required' });
+        return res.status(400).json({ error: "gameId is required" });
       }
 
       // Logic to create game session goes here
 
-      return res.status(501).json({ error: 'Not implemented' });
+      return res.status(501).json({ error: "Not implemented" });
     } catch (error) {
       logger.error(`Failed to create game session: ${error}`);
-      return res.status(500).json({ error: 'Failed to create game session' });
+      return res.status(500).json({ error: "Failed to create game session" });
     }
   }
 
@@ -141,15 +145,17 @@ class GameController {
       const { gameId, playerId } = req.body;
 
       if (!gameId || !playerId) {
-        return res.status(400).json({ error: 'Both gameId and playerId are required' });
+        return res
+          .status(400)
+          .json({ error: "Both gameId and playerId are required" });
       }
 
       // Logic to join game goes here
 
-      return res.status(501).json({ error: 'Not implemented' });
+      return res.status(501).json({ error: "Not implemented" });
     } catch (error) {
       logger.error(`Failed to join game: ${error}`);
-      return res.status(500).json({ error: 'Failed to join game' });
+      return res.status(500).json({ error: "Failed to join game" });
     }
   }
 }

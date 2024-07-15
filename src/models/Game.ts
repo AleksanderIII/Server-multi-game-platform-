@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../config/database";
 
 interface GameAttributes {
   id: number;
@@ -7,16 +7,21 @@ interface GameAttributes {
   genre: string;
   releaseDate: Date | null;
   isReleased: boolean;
+  imageUrl: string;
 }
 
-interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
+interface GameCreationAttributes extends Optional<GameAttributes, "id"> {}
 
-class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
+class Game
+  extends Model<GameAttributes, GameCreationAttributes>
+  implements GameAttributes
+{
   public id!: number;
   public name!: string;
   public genre!: string;
   public releaseDate!: Date | null;
   public isReleased!: boolean;
+  public imageUrl!: string;
 
   // Required if you want to automatically add timestamps (createdAt, updatedAt)
   public readonly createdAt!: Date;
@@ -47,10 +52,14 @@ Game.init(
       allowNull: false,
       defaultValue: false,
     },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     sequelize,
-    modelName: 'Game',
+    modelName: "game",
   }
 );
 

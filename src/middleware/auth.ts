@@ -1,16 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 
-const secret = "supersecret";
+const secret = process.env.JWT_SECRET || 'supersecret';
 
 export const authenticateJWT = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization")?.split(" ")[1];
+  const token = req.cookies.token; // Получаем токен из httpOnly куки
   if (!token) {
-    return res.status(401).json({ error: "Access denied" });
+    return res.status(401).json({ error: 'Access denied' });
   }
 
   try {
@@ -18,6 +18,6 @@ export const authenticateJWT = (
     req.user = decoded as { userId: number };
     next();
   } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ error: 'Invalid token' });
   }
 };
