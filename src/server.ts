@@ -1,20 +1,18 @@
 import express from "express";
 import cors from "cors";
 import * as http from "http";
-import * as WebSocket from "ws";
 import sequelize from "./config/database";
 import gameRoutes from "./routes/gameRoutes";
 import playerRoutes from "./routes/playerRoutes";
 import authRoutes from "./routes/authRoutes";
 import { authenticateJWT } from "./middleware/auth";
 import { loggerMiddleware } from "./middleware/loggerMiddleware";
-import WebSocketController from "./controllers/WebSocketController";
 import cookieParser from "cookie-parser";
+import { LobbyService } from "./services/LobbyService";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
 
 app.use(express.json());
 app.use(
@@ -40,10 +38,7 @@ sequelize
   .then(() => console.log("Database synchronized"))
   .catch((err) => console.error("Error synchronizing database:", err));
 
-// Handling WebSocket connections
-wss.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
-  WebSocketController.handleConnection(ws, req);
-});
+const lobbyService = new LobbyService(server);
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

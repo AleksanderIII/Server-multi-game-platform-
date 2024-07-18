@@ -44,7 +44,6 @@ class AuthController {
       // Возвращаем созданного пользователя и токен
       return res.status(201).json({ user: newUser });
     } catch (error) {
-      console.error('Error in register:', error);
       return res.status(500).json({ error: 'Failed to register user' });
     }
   }
@@ -58,11 +57,9 @@ class AuthController {
         return res.status(400).json({ errors: errors.array() });
       }
       const { username, password } = req.body;
-      console.log(username, password);
 
       // Поиск пользователя в базе данных
       const user = await User.findOne({ where: { username } });
-      console.log(user);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -75,7 +72,6 @@ class AuthController {
 
       // Генерация JWT
       const token = jwt.sign({ userId: user.id }, secret, { expiresIn: '1h' });
-      console.log(token);
 
       // Отправка httpOnly куки с токеном
       res.cookie('token', token, {
@@ -86,7 +82,6 @@ class AuthController {
       // Возвращаем ответ без токена
       return res.status(200).json({ user });
     } catch (error) {
-      console.error('Error in login:', error);
       return res.status(500).json({ error: 'Failed to log in' });
     }
   }
