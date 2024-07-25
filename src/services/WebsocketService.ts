@@ -1,50 +1,45 @@
-import * as WebSocket from "ws";
-import { Server as HttpServer } from "http";
+import WebSocket from "ws";
+import http from "http";
+import { MessageHandler } from "./MessageHandler";
+import { LobbyManager } from "./LobbyManager";
+import { GameManager } from "./GameManager";
 
 export class WebSocketService {
-  protected wss: WebSocket.Server;
+  private wss: WebSocket.Server;
 
-  constructor(server: HttpServer) {
+  constructor(server: http.Server) {
     this.wss = new WebSocket.Server({ server });
     this.wss.on("connection", this.handleConnection.bind(this));
   }
 
-  protected handleConnection(ws: WebSocket) {
-    console.log("New client connected");
+  private handleConnection(ws: WebSocket) {
+    console.log("New WebSocket connection");
 
-    ws.on("message", this.handleMessage.bind(this, ws));
-
-    ws.on("close", () => {
-      console.log("Client disconnected");
-      this.handleDisconnect(ws);
-    });
+    ws.on("message", (message: WebSocket.RawData) =>
+      MessageHandler.handleMessage(ws, message)
+    );
+    ws.on("close", () => this.handleDisconnect(ws));
   }
 
-  protected handleMessage(ws: WebSocket, message: string) {
-    console.log(`Received message: ${message}`);
-    const data = JSON.parse(message);
-    this.routeMessage(ws, data);
-  }
-
-  protected handleDisconnect(ws: WebSocket) {
+  private handleDisconnect(ws: WebSocket) {
     console.log("Client disconnected");
-  }
 
-  protected routeMessage(ws: WebSocket, data: any) {
-    // Должно быть переопределено в дочерних классах
+    for (const game in LobbyManager.getLobbies()) {
+      const lobby = LobbyManager.getLobby(game);
+      if (lobby) {
+        lobby.players = lobby.players.filter(player => player.ws !== ws);
+        if (lobby.players.length === 0) {
+          delete LobbyManager.getLobbies()[game];
+        } else {
+          LobbyManager.broadcastToLobby(game, { type: "LOBBY_UPDATE", game, players: lobby.players.map(player => player.name) });
+        }
+      }
+    }
   }
-
-  protected sendMessage(ws: WebSocket, message: any) {
+  
+  public static sendMessage(ws: WebSocket, message: any) {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(message));
     }
-  }
-
-  protected broadcastToClients(clients: WebSocket[], message: any) {
-    clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(message));
-      }
-    });
   }
 }
