@@ -1,4 +1,5 @@
 import WebSocket from "ws";
+import { ChatManager } from "./ChatManager";
 import { LobbyManager } from "./LobbyManager";
 import { GameManager } from "./GameManager";
 
@@ -18,6 +19,11 @@ export class MessageHandler {
         case "START_GAME":
         case "MAKE_MOVE":
           GameManager.handleGameMessage(ws, data);
+          break;
+
+        case "SEND_MESSAGE":
+          console.log(ws, data);
+          ChatManager.handleChatMessage(ws, data);
           break;
 
         default:

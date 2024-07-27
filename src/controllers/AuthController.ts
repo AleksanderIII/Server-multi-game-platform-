@@ -3,8 +3,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
 import User from '../models/User';
+import dotenv from "dotenv";
 
-const secret = process.env.JWT_SECRET || 'supersecret'; // Используем переменную окружения для секрета JWT
+dotenv.config();
+
+const secret = process.env.JWT_SECRET || 'supersecret';
 
 class AuthController {
   // Обработчик регистрации пользователей

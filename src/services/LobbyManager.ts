@@ -1,6 +1,7 @@
 import WebSocket from "ws";
 import { GameManager } from "./GameManager";
 import { WebSocketService } from "./WebsocketService";
+import { ChatManager } from "./ChatManager";
 
 interface LobbyPlayer {
   ws: WebSocket;
@@ -37,7 +38,7 @@ export class LobbyManager {
         break;
     }
   }
-  
+
   public static joinLobby(ws: WebSocket, game: string, playerName: string) {
     if (!lobbies[game]) {
       lobbies[game] = { players: [], gameReady: false };
@@ -55,6 +56,13 @@ export class LobbyManager {
         type: "LOBBY_UPDATE",
         game,
         players: lobby.players.map((player) => player.name),
+      });
+
+      const chatHistory = ChatManager.getChatHistory(game);
+      WebSocketService.sendMessage(ws, {
+        type: "CHAT_HISTORY",
+        game,
+        chatHistory,
       });
     } else {
       console.log(`Player ${playerName} is already in the lobby ${game}`);

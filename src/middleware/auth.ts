@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const secret = process.env.JWT_SECRET || 'supersecret';
+
 
 export const authenticateJWT = (
   req: Request,

@@ -1,13 +1,14 @@
 import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
 
 const sequelize = new Sequelize(
-  "multi_game_platform",
-  "postgres",
-  "6818792Explorer",
+  process.env.DATABASE_NAME || "multi_game_platform",
+  process.env.DATABASE_USER || "postgres",
+  process.env.DATABASE_PASSWORD || "password",
   {
-    host: "localhost",
+    host: process.env.DATABASE_HOST || "localhost",
     dialect: "postgres",
-    port: 5433,
+    port: parseInt(process.env.DATABASE_PORT!, 10) || 5432,
   }
 );
 

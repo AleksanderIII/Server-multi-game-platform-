@@ -2,7 +2,6 @@ import WebSocket from "ws";
 import http from "http";
 import { MessageHandler } from "./MessageHandler";
 import { LobbyManager } from "./LobbyManager";
-import { GameManager } from "./GameManager";
 
 export class WebSocketService {
   private wss: WebSocket.Server;
@@ -36,7 +35,7 @@ export class WebSocketService {
       }
     }
   }
-  
+
   public static sendMessage(ws: WebSocket, message: any) {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(message));
